@@ -1,4 +1,4 @@
-import { StyleSheet, Image, Platform } from 'react-native';
+import {StyleSheet, Image, Platform, Button} from 'react-native';
 
 import { Collapsible } from '@/components/Collapsible';
 import { ExternalLink } from '@/components/ExternalLink';
@@ -6,8 +6,10 @@ import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { IconSymbol } from '@/components/ui/IconSymbol';
+import {useAuthContext} from "@/app/context/AuthContext";
 
 export default function TabTwoScreen() {
+    const {signOut} = useAuthContext()
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
@@ -91,6 +93,7 @@ export default function TabTwoScreen() {
           ),
         })}
       </Collapsible>
+        <Button title="signout" onPress={() => signOut()} />
     </ParallaxScrollView>
   );
 }
