@@ -7,7 +7,7 @@ import { useEffect } from 'react';
 import { useAssets } from 'expo-asset';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
-import { AuthProvider } from "@/app/context/AuthContext";
+import { AuthProvider, useAuthContext } from "@/app/context/AuthContext";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -35,7 +35,7 @@ export default function RootLayout() {
     <AuthProvider>
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="(auth)" options={{ headerShown: false }}/>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }}/>
           <Stack.Screen name="+not-found" />
         </Stack>
         <StatusBar style="auto" />

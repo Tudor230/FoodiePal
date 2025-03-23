@@ -1,11 +1,24 @@
 import { Image, StyleSheet, Platform } from 'react-native';
+import { useAuthContext } from "@/app/context/AuthContext";
 
 import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+import { Redirect } from 'expo-router';
 
 export default function HomeScreen() {
+  const { user, loading } = useAuthContext();
+  
+  // Wait for authentication to complete before deciding what to render
+  if (loading) {
+    return null; // Show nothing while loading
+  }
+  
+  if (!user) {
+    return <Redirect href="/(auth)/start"/>
+  }
+  
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}

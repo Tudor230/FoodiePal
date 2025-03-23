@@ -8,11 +8,12 @@ export default function Auth() {
     const router = useRouter();
     const { user } = useAuthContext();
     
-    useEffect(() => {
-        if (user) {
-            router.replace('../(tabs)')
-        }
-    }, [user])
+    // useEffect(() => {
+    //     if (user) {
+    //         router.replace('../(tabs)');
+    //     }
+    // }, [user]);
+
 
     return (
         <BlurHashBackground>

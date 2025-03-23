@@ -11,6 +11,7 @@ type User = {
 
 interface AuthContextType {
     user: User | null;
+    loading: boolean;
     signIn: (email: string, password: string) => Promise<void>;
     signOut: () => Promise<void>;
     createAccount: (email: string, password: string) => Promise<void>;
@@ -20,6 +21,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider(props: { children: ReactNode }){
     const [user, setUser] = useState<User | null>(null);
+    const [loading, setLoading] = useState(true);
     const router = useRouter();
 
     useEffect(() => {
@@ -28,26 +30,30 @@ export function AuthProvider(props: { children: ReactNode }){
             try {
                 const storedUser = await AsyncStorage.getItem('user');
                 if (storedUser) {
-                    return(JSON.parse(storedUser));  // Restore the user from AsyncStorage
+                    const parsedUser = JSON.parse(storedUser);
+                    setUser(parsedUser);
                 }
             } catch (error) {
                 console.log("Error loading user from AsyncStorage", error);
+            } finally {
+                setLoading(false);
             }
         };
 
-        loadUserFromStorage().then(r=> setUser(r))
+        loadUserFromStorage();
 
         const subscriber = onAuthStateChanged(auth, (user) => {
-            console.log("User changed");
+            console.log("User changed: ", user);
             if (user) {
                 const userData = {
                     id: user.uid,
                     email: user.email || ''
                 };
-                AsyncStorage.setItem('user', JSON.stringify(userData)).then(r=> console.log("User saved to AsyncStorage", userData));
+                AsyncStorage.setItem('user', JSON.stringify(userData))
+                setUser(userData);
             } else {
                 setUser(null);
-                AsyncStorage.removeItem('user').then(r=> console.log("User removed from AsyncStorage", r));
+                AsyncStorage.removeItem('user')
             }
         })
         return () => subscriber();
@@ -74,14 +80,14 @@ export function AuthProvider(props: { children: ReactNode }){
     const logout = async () => {
         try {
             await signOut(auth);
-            router.dismissTo('/(auth)')
+            router.dismissTo('/(auth)/start')
         } catch (error) {
             console.log("Logout Error:", error);
             throw error;
         }
     }
     return (
-        <AuthContext.Provider value = {{user, signIn: login, signOut: logout, createAccount: signup}}>
+        <AuthContext.Provider value = {{user, loading, signIn: login, signOut: logout, createAccount: signup}}>
             {props.children}
         </AuthContext.Provider>
     )
