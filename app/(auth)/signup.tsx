@@ -13,7 +13,7 @@ export default function SignupScreen() {
     const handleSignup = async () => {
         try {
             await createAccount(email, password);
-            router.replace('./(tabs)')
+            router.replace('/(tabs)/home')
         } catch (error: any) {
             alert('Signup Failed: ' + error.message);
         }

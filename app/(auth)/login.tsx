@@ -13,7 +13,7 @@ export default function LoginScreen() {
     const handleLogin = async () => {
         try {
             await signIn(email, password);
-            router.replace('./(tabs)')
+            router.replace('/(tabs)/home')
         } catch (error: any) {
             alert('Login Failed: ' + error.message);
         }
@@ -47,7 +47,7 @@ export default function LoginScreen() {
                     <Text style={styles.buttonText}>Login</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.link} onPress={() => router.dismissTo('/signup')}>
+                <TouchableOpacity style={styles.link} onPress={() => router.push('/signup')}>
                     <Text style={styles.linkText}>Don't have an account? Sign Up</Text>
                 </TouchableOpacity>
             </View>
