@@ -18,7 +18,6 @@ type Restaurant = {
 }
 
 export default function HomeScreen() {
-  const { user, loading } = useAuthContext();
   const [location, setLocation] = useState<Location.LocationObject | null>(null);
   const [locationLoading, setLocationLoading] = useState(true);
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
@@ -69,15 +68,6 @@ export default function HomeScreen() {
     } catch (error) {
         console.error('Error fetching nearby restaurants:', error);
     }
-  }
-  
-  // Wait for authentication to complete before deciding what to render
-  if (loading) {
-    return null; // Show nothing while loading
-  }
-  
-  if (!user) {
-    return <Redirect href="/(auth)/start"/>
   }
   
   const goToMyLocation = () => {
