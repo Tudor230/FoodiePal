@@ -7,6 +7,7 @@ import MapView, { Marker } from 'react-native-maps';
 import { Redirect } from 'expo-router';
 import * as Location from 'expo-location';
 import { Ionicons } from '@expo/vector-icons';
+import {MapPin} from '@/components/ui/MapPin';
 
 type Restaurant = {
   id: string;
@@ -47,26 +48,27 @@ export default function HomeScreen() {
 
   const fetchNearbyRestaurants = async (latitude: number, longitude: number) => {
     try{
-        const apiKey = process.env.EXPO_PUBLIC_TOMTOM_KEY;
+        const apiKey = process.env.EXPO_PUBLIC_GEOAPIFY_KEY;
         const radius = 1000;
-        const limit = 20;
-        const url = `https://api.tomtom.com/search/2/nearbySearch/.json?key=${apiKey}&lat=${latitude}&lon=${longitude}&radius=${radius}&limit=${limit}&categorySet=7315`;
+        const limit = 40;
+        const url = `https://api.geoapify.com/v2/places?categories=catering&filter=circle:${longitude},${latitude},${radius}&limit=${limit}&bias=proximity:${longitude},${latitude}&apiKey=${apiKey}`;
+        
         const response = await fetch(url);
         const data = await response.json();
-        if (data.results) {
-            const restaurants: Restaurant[] = data.results.map((result: any) => ({
-                id: result.id,
-                name: result.poi.name,
-                latitude: result.position.lat,
-                longitude: result.position.lon,
-                address: result.address.freeformAddress,
-            }))
+        
+        if (data.features) {
+            const restaurants: Restaurant[] = data.features.map((feature: any) => ({
+                id: feature.properties.place_id,
+                name: feature.properties.name,
+                latitude: feature.geometry.coordinates[1],
+                longitude: feature.geometry.coordinates[0],
+                address: feature.properties.address_line2,
+            }));
             setRestaurants(restaurants);
         }
     } catch (error) {
         console.error('Error fetching nearby restaurants:', error);
     }
-    
   }
   
   // Wait for authentication to complete before deciding what to render
@@ -118,6 +120,18 @@ export default function HomeScreen() {
                 title={restaurant.name}
                 description={restaurant.address}
               />
+              // Custom map marker
+              // <Marker
+              //   key={restaurant.id}
+              //   coordinate={{
+              //     latitude: restaurant.latitude,
+              //     longitude: restaurant.longitude,
+              //   }}
+              //   title={restaurant.name}
+              //   description={restaurant.address}
+              // >
+              //   <MapPin/>
+              // </Marker>
             ))}
           </MapView>
           <TouchableOpacity 
